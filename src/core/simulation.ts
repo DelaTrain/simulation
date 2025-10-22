@@ -1,6 +1,9 @@
 export class Simulation {
-  constructor() {}
-  step() {}
+    timeStep: number = 60; // in seconds
+    currentTime: number = Date.now(); // in seconds
+
+    constructor() {}
+    step() {}
 }
 
 export const simulation = new Simulation();
