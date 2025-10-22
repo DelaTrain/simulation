@@ -1,25 +1,32 @@
 import { useState } from "react";
-import "./App.css";
+import { simulation } from "./core/simulation";
+import { convertTime } from "./utils/print";
 
 function App() {
-  const [count, setCount] = useState(0);
+    const [time, setTime] = useState(0);
 
-  return (
-    <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  );
+    return (
+        <>
+            <h1>Symulacja</h1>
+            <p>{convertTime(time)}</p>
+            <button
+                onClick={() => {
+                    simulation.step();
+                    setTime(simulation.currentTime);
+                }}
+            >
+                step
+            </button>
+            <button
+                onClick={() => {
+                    simulation.restart();
+                    setTime(simulation.currentTime);
+                }}
+            >
+                restart
+            </button>
+        </>
+    );
 }
 
 export default App;
