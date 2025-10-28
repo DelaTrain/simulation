@@ -1,4 +1,4 @@
-import "./Train";
+import "./train";
 
 export class Simulation {
     timeStep: number = 15000; // in milliseconds
