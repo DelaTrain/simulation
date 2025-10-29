@@ -74,12 +74,18 @@ export class Track {
 
 class TrainScheduleStep {
     #trainID: string;
-    #arrivalTime: Date;
-    #departureTime: Date;
+    #arrivalTime: Date | null;
+    #departureTime: Date | null;
     #nextStation: string;
     #distanceToNext: number;
 
-    constructor(trainID: string, arrivalTime: Date, departureTime: Date, nextStation: string, distanceToNext: number) {
+    constructor(
+        trainID: string,
+        arrivalTime: Date | null,
+        departureTime: Date | null,
+        nextStation: string,
+        distanceToNext: number
+    ) {
         this.#trainID = trainID;
         this.#arrivalTime = arrivalTime;
         this.#departureTime = departureTime;
@@ -123,7 +129,13 @@ export class Station {
         this.#position = position;
     }
 
-    addScheduleInfo(train: Train, arrivalTime: Date, departureTime: Date, nextStation: string, distanceToNext: number) {
+    addScheduleInfo(
+        train: Train,
+        arrivalTime: Date | null,
+        departureTime: Date | null,
+        nextStation: string,
+        distanceToNext: number
+    ) {
         let schedule = new TrainScheduleStep(train.ID, arrivalTime, departureTime, nextStation, distanceToNext);
         this.#trainsSchedule.push(schedule);
         this.#distances.set(train, schedule.distanceToNext);
