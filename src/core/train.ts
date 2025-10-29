@@ -7,19 +7,19 @@ import { simulation } from "./simulation";
  */
 export class TrainType {
     /** priority scale value amongst trains */
-    _priority: number = 0;
+    #priority: number = 0;
     /** the time exceeding which will result in some delay */
-    _maxWaitingTime: number = 0; // Is it ok?
+    #maxWaitingTime: number = 0; // Is it ok?
     /** speed value which cannot be surpassed */
-    _maxVelocity: number = 0;
+    #maxVelocity: number = 0;
     /** idk; probably some parameter describing capability of gaining the above speed */
-    _acceleration: number = 0;
+    #acceleration: number = 0;
 
     constructor(priority: number, maxWaitingTime: number, maxVelocity: number, acceleration: number) {
-        this._priority = priority;
-        this._maxWaitingTime = maxWaitingTime;
-        this._maxVelocity = maxVelocity;
-        this._acceleration = acceleration;
+        this.#priority = priority;
+        this.#maxWaitingTime = maxWaitingTime;
+        this.#maxVelocity = maxVelocity;
+        this.#acceleration = acceleration;
     }
 
     /**
@@ -27,20 +27,20 @@ export class TrainType {
      * @param newPriority new train priority
      */
     updatePriority(newPriority: number) {
-        this._priority = newPriority;
+        this.#priority = newPriority;
     }
 
     get priority() {
-        return this._priority;
+        return this.#priority;
     }
     get maxWaitingTime() {
-        return this._maxWaitingTime;
+        return this.#maxWaitingTime;
     }
     get maxVelocity() {
-        return this._maxVelocity;
+        return this.#maxVelocity;
     }
     get acceleration() {
-        return this._acceleration;
+        return this.#acceleration;
     }
 }
 
@@ -50,13 +50,13 @@ export class TrainType {
 export class TrainPosition {
     // maybe export should be here also
     /** distance from the previous Station */
-    _distance: number; // in something per step // TODO - modify when velocity set
+    #distance: number; // in something per step // TODO - modify when velocity set
     /** as the name suggests - idk if mandatory in the basic version */
-    _railNumber: number;
+    #railNumber: number;
 
     constructor(distance: number, railNumber: number) {
-        this._distance = distance;
-        this._railNumber = railNumber;
+        this.#distance = distance;
+        this.#railNumber = railNumber;
     }
 
     /**
@@ -65,7 +65,7 @@ export class TrainPosition {
      * @param acceleration train current acceleration
      */
     trainStep(velocity: number, acceleration: number) {
-        this._distance +=
+        this.#distance +=
             velocity * simulation.timeStep + (1 / 2) * (acceleration * simulation.timeStep * simulation.timeStep);
     }
 
@@ -74,14 +74,14 @@ export class TrainPosition {
      * @param newRailNumber (new) current rail number
      */
     updateRailNumber(newRailNumber: number) {
-        this._railNumber = newRailNumber;
+        this.#railNumber = newRailNumber;
     }
 
     get distance() {
-        return this._distance;
+        return this.#distance;
     }
     get railNumber() {
-        return this._railNumber;
+        return this.#railNumber;
     }
 }
 
@@ -90,27 +90,27 @@ export class TrainPosition {
  */
 export class Train {
     /**  */
-    _ID: string;
+    #ID: string;
     /** train model or company */
-    _type: TrainType;
+    #type: TrainType;
     /** train speed value */
-    _velocity: number = 0; // TODO - unit
+    #velocity: number = 0; // TODO - unit
     /** train acceleration value */
-    _acceleration: number = 0;
+    #acceleration: number = 0;
     /** final station for the train */
-    _goalStationFinal: Station;
+    #goalStationFinal: Station;
     /**
      * CURRENT Station  -> if staying at the station/ on the platform
      *
      * NEXT Station     -> if on the way
      * */
-    _goalStationStep: Station;
+    #goalStationStep: Station;
     /** contains distance and rail number */
-    _position: TrainPosition;
+    #position: TrainPosition;
     /** says if the train is waiting or not */
-    _status: TrainStatus = TrainStatus.Waiting;
+    #status: TrainStatus = TrainStatus.Waiting;
     /** individual time of being late */
-    _delay: number = 0;
+    #delay: number = 0;
 
     constructor(
         ID: string,
@@ -119,11 +119,11 @@ export class Train {
         goalFinal: Station,
         goalStep: Station
     ) {
-        this._ID = ID;
-        this._type = trainType;
-        this._goalStationFinal = goalFinal;
-        this._goalStationStep = goalStep;
-        this._position = currentPosition;
+        this.#ID = ID;
+        this.#type = trainType;
+        this.#goalStationFinal = goalFinal;
+        this.#goalStationStep = goalStep;
+        this.#position = currentPosition;
     }
 
     /**
@@ -131,7 +131,7 @@ export class Train {
      * @param newVelocity updated velocity
      */
     updateVelocity(newVelocity: number) {
-        this._velocity = newVelocity;
+        this.#velocity = newVelocity;
     }
 
     /**
@@ -139,7 +139,7 @@ export class Train {
      * @param newAcceleration updated acceleration
      */
     updateAcceleration(newAcceleration: number) {
-        this._acceleration = newAcceleration;
+        this.#acceleration = newAcceleration;
     }
 
     /**
@@ -148,15 +148,15 @@ export class Train {
      * @param finalStation optional final goal
      */
     updateGoal(stepStation: Station, finalStation?: Station) {
-        this._goalStationStep = stepStation;
+        this.#goalStationStep = stepStation;
         if (finalStation) {
-            this._goalStationFinal = finalStation;
+            this.#goalStationFinal = finalStation;
         }
     }
 
     stop() {
-        this._velocity = 0;
-        this._acceleration = 0;
+        this.#velocity = 0;
+        this.#acceleration = 0;
     }
 
     /**
@@ -164,47 +164,47 @@ export class Train {
      * @param newRailNumber optional rail (number) change
      */
     moveTrain(newRailNumber?: number) {
-        let goalDistance = this._goalStationStep._distances.get(this);
+        let goalDistance = this.#goalStationStep.distances.get(this);
         if (goalDistance) {
             if (true) {
-                // (goalDistance - this._position._distance) // TODO
-                this._position.trainStep(this._velocity, this._acceleration);
+                // (goalDistance - this.#position.#distance) // TODO
+                this.#position.trainStep(this.#velocity, this.#acceleration);
             } else {
                 // TODO
             }
         } else {
-            this._status = TrainStatus.Waiting;
+            this.#status = TrainStatus.Waiting;
         }
         if (newRailNumber) {
-            this._position.updateRailNumber(newRailNumber);
+            this.#position.updateRailNumber(newRailNumber);
         }
     }
 
     get ID() {
-        return this._ID;
+        return this.#ID;
     }
     get type() {
-        return this._type;
+        return this.#type;
     }
     get velocity() {
-        return this._velocity;
+        return this.#velocity;
     }
     get acceleration() {
-        return this._acceleration;
+        return this.#acceleration;
     }
     get goalStationFinal() {
-        return this._goalStationFinal;
+        return this.#goalStationFinal;
     }
     get goalStationStep() {
-        return this._goalStationStep;
+        return this.#goalStationStep;
     }
     get position() {
-        return this._position;
+        return this.#position;
     }
     get status() {
-        return this._status;
+        return this.#status;
     }
     get delay() {
-        return this._delay;
+        return this.#delay;
     }
 }

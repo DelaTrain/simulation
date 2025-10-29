@@ -5,12 +5,12 @@ import { Train } from "./train";
  */
 export class Platform {
     /** all Train units present on the Platform */
-    _currectOccupancy: Train[] = [];
+    #currectOccupancy: Train[] = [];
     /** maximum amount of Train units on the Platform */
-    _capacity: number = 1;
+    #capacity: number = 1;
 
     constructor(capacity: number) {
-        this._capacity = capacity;
+        this.#capacity = capacity;
     }
 
     /**
@@ -18,7 +18,7 @@ export class Platform {
      * @returns false if is full
      */
     isNotFull(): boolean {
-        if (this._currectOccupancy.length == this._capacity || this._currectOccupancy.every((train) => train != null)) {
+        if (this.#currectOccupancy.length == this.#capacity || this.#currectOccupancy.every((train) => train != null)) {
             return false;
         } else return true;
     }
@@ -29,7 +29,7 @@ export class Platform {
      * @returns true if success
      */
     trainDepart(train: Train): boolean {
-        let deletedTrain = this._currectOccupancy.splice(this._currectOccupancy.indexOf(train), 1);
+        let deletedTrain = this.#currectOccupancy.splice(this.#currectOccupancy.indexOf(train), 1);
         if (deletedTrain.length == 1) {
             return true;
         } else {
@@ -43,21 +43,21 @@ export class Platform {
      * @returns false if the Platform is full
      */
     trainArrival(train: Train): boolean {
-        let currentNumber = this._currectOccupancy.length;
-        if (currentNumber < this._capacity) {
-            return this._currectOccupancy.push(train) > currentNumber;
+        let currentNumber = this.#currectOccupancy.length;
+        if (currentNumber < this.#capacity) {
+            return this.#currectOccupancy.push(train) > currentNumber;
         }
         return false;
     }
 
     get currentOccupancy() {
-        return this._currectOccupancy.length;
+        return this.#currectOccupancy.length;
     }
     get capacity() {
-        return this._capacity;
+        return this.#capacity;
     }
     get trains() {
-        return this._currectOccupancy;
+        return this.#currectOccupancy;
     }
 }
 
@@ -66,15 +66,15 @@ export class Platform {
  */
 export class Station {
     /** ???? */
-    _trainsSchedule: string = ""; // zależy, co dostarczy Kacper ????? TODO
+    #trainsSchedule: string = ""; // zależy, co dostarczy Kacper ????? TODO
     /** Platform units of the Station */
-    _platforms: Platform[] = [];
-    _distances: Map<Train, number> = new Map();
+    #platforms: Platform[] = [];
+    #distances: Map<Train, number> = new Map();
 
     /*
     constructor(trainsSchedule, trains) {
         for(let i = 0; i < cos; i++){
-            this._platforms.push(new Platform(pojemnosc)); // tworzenie peronów
+            this.#platforms.push(new Platform(pojemnosc)); // tworzenie peronów
             // operacje startowe na pociągach itd.
         }
     }
@@ -101,4 +101,8 @@ export class Station {
         // stwórz zmodyfikowany rozkład jazdy
     }
     */
+
+    get distances() {
+        return this.#distances;
+    }
 }
