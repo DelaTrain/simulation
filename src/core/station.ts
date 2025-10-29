@@ -1,3 +1,4 @@
+import type { Position } from "../utils/position";
 import { Train } from "./train";
 
 /**
@@ -71,7 +72,6 @@ export class Track {
     }
 }
 
-
 class TrainScheduleStep {
     #trainID: string;
     #arrivalTime: Date;
@@ -102,17 +102,15 @@ class TrainScheduleStep {
     get distanceToNext() {
         return this.#distanceToNext;
     }
-
 }
-
 
 /**
  * For representation of each train Station
  */
 export class Station {
     #name: string;
-    #latitude: number;
-    #longitude: number;
+    #position: Position;
+
     /** contains info about each Train next goal, especially the distance to the next Station */
     #trainsSchedule: TrainScheduleStep[] = [];
     /** Platform units of the Station */
@@ -120,14 +118,12 @@ export class Station {
 
     #distances: Map<Train, number> = new Map();
 
-
-    constructor(name: string, latitude: number, longitude: number) {
+    constructor(name: string, position: Position) {
         this.#name = name;
-        this.#latitude = latitude;
-        this.#longitude = longitude;
+        this.#position = position;
     }
 
-    addScheduleInfo(train: Train, arrivalTime: Date, departureTime: Date, nextStation: string, distanceToNext: number){
+    addScheduleInfo(train: Train, arrivalTime: Date, departureTime: Date, nextStation: string, distanceToNext: number) {
         let schedule = new TrainScheduleStep(train.ID, arrivalTime, departureTime, nextStation, distanceToNext);
         this.#trainsSchedule.push(schedule);
         this.#distances.set(train, schedule.distanceToNext);
@@ -157,5 +153,12 @@ export class Station {
 
     get distances() {
         return this.#distances;
+    }
+
+    get name(): string {
+        return this.#name;
+    }
+    get position(): Position {
+        return this.#position;
     }
 }

@@ -1,13 +1,20 @@
+import type { Station } from "./station";
 import "./train";
+import type { Train } from "./train";
 
 export class Simulation {
     timeStep: number = 15000; // in milliseconds
     currentTime: number = Date.now(); // in milliseconds
 
+    stations: Map<string, Station> = new Map();
+    trains: Map<string, Train> = new Map();
+
     constructor() {}
+
     step() {
         this.currentTime += this.timeStep;
     }
+
     restart() {
         this.currentTime = Date.now();
     }

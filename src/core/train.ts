@@ -1,6 +1,8 @@
 import type { Station } from "./station";
 import { TrainStatus } from "./trainStatus";
 import { simulation } from "./simulation";
+import type { Rail } from "./rail";
+import type { Position } from "../utils/position";
 
 /**
  * For representation of each Train Type depending on the train model/ company
@@ -44,6 +46,11 @@ export class TrainType {
     }
 }
 
+export enum TrainDirection {
+    FromStartToEnd,
+    FromEndToStart,
+}
+
 /**
  * For representation of each Train Position on the way
  */
@@ -52,11 +59,13 @@ export class TrainPosition {
     /** distance from the previous Station */
     #distance: number; // in something per step // TODO - modify when velocity set
     /** as the name suggests - idk if mandatory in the basic version */
-    #railNumber: number;
+    #rail: Rail;
+    #direction: TrainDirection;
 
-    constructor(distance: number, railNumber: number) {
+    constructor(rail: Rail, direction: TrainDirection = TrainDirection.FromStartToEnd, distance: number = 0) {
         this.#distance = distance;
-        this.#railNumber = railNumber;
+        this.#rail = rail;
+        this.#direction = direction;
     }
 
     /**
@@ -73,15 +82,24 @@ export class TrainPosition {
      * Changes the rail train is currently using
      * @param newRailNumber (new) current rail number
      */
-    updateRailNumber(newRailNumber: number) {
-        this.#railNumber = newRailNumber;
+    updateRailNumber(newRail: Rail) {
+        this.#rail = newRail;
+        this.#distance = 0;
+    }
+
+    calculatePosition(): Position {
+        if (this.#direction === TrainDirection.FromStartToEnd) {
+            return this.#rail.findPositionAtDistance(this.#distance);
+        } else {
+            return this.#rail.findPositionAtDistance(this.#rail.length() - this.#distance);
+        }
     }
 
     get distance() {
         return this.#distance;
     }
     get railNumber() {
-        return this.#railNumber;
+        return this.#rail;
     }
 }
 
@@ -161,9 +179,9 @@ export class Train {
 
     /**
      * Moves Train
-     * @param newRailNumber optional rail (number) change
+     * @param newRail optional rail (number) change //TODO: Update comment
      */
-    moveTrain(newRailNumber?: number) {
+    moveTrain(newRail?: Rail) {
         let goalDistance = this.#goalStationStep.distances.get(this);
         if (goalDistance) {
             if (true) {
@@ -175,8 +193,8 @@ export class Train {
         } else {
             this.#status = TrainStatus.Waiting;
         }
-        if (newRailNumber) {
-            this.#position.updateRailNumber(newRailNumber);
+        if (newRail) {
+            this.#position.updateRailNumber(newRail);
         }
     }
 
