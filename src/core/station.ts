@@ -1,4 +1,5 @@
 import type { Position } from "../utils/position";
+import type { Rail } from "./rail";
 import { Train } from "./train";
 
 /**
@@ -76,21 +77,21 @@ class TrainScheduleStep {
     #trainID: string;
     #arrivalTime: Date | null;
     #departureTime: Date | null;
-    #nextStation: string;
-    #distanceToNext: number;
+    #nextStation: Station | null;
+    #nextRail: Rail | null;
 
     constructor(
         trainID: string,
         arrivalTime: Date | null,
         departureTime: Date | null,
-        nextStation: string,
-        distanceToNext: number
+        nextStation: Station | null,
+        nextRail: Rail | null,
     ) {
         this.#trainID = trainID;
         this.#arrivalTime = arrivalTime;
         this.#departureTime = departureTime;
         this.#nextStation = nextStation;
-        this.#distanceToNext = distanceToNext;
+        this.#nextRail = nextRail;
     }
 
     get trainID() {
@@ -105,8 +106,8 @@ class TrainScheduleStep {
     get nextStation() {
         return this.#nextStation;
     }
-    get distanceToNext() {
-        return this.#distanceToNext;
+    get nextRail() {
+        return this.#nextRail;
     }
 }
 
@@ -133,12 +134,12 @@ export class Station {
         train: Train,
         arrivalTime: Date | null,
         departureTime: Date | null,
-        nextStation: string,
-        distanceToNext: number
+        nextStation: Station | null,
+        nextRail: Rail | null,
     ) {
-        let schedule = new TrainScheduleStep(train.ID, arrivalTime, departureTime, nextStation, distanceToNext);
+        let schedule = new TrainScheduleStep(train.ID, arrivalTime, departureTime, nextStation, nextRail);
         this.#trainsSchedule.push(schedule);
-        this.#distances.set(train, schedule.distanceToNext);
+        this.#distances.set(train, schedule.nextRail?.length() ?? 0);
     }
     // creating and starting trains methods
     // delay managing -> the most complex mechanism
