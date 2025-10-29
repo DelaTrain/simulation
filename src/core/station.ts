@@ -1,20 +1,24 @@
 import { Train } from "./train";
 
 /**
- * For representation of each Platform at the station
+ * For representation of each platform Track at the station
  */
-export class Platform {
-    /** all Train units present on the Platform */
+export class Track {
+    #platformNumber: number;
+    #trackNumber: number;
+    /** all Train units present on the platform track */
     #currectOccupancy: Train[] = [];
-    /** maximum amount of Train units on the Platform */
+    /** maximum amount of Train units on the Track */
     #capacity: number = 1;
 
-    constructor(capacity: number) {
+    constructor(platformNumber: number, trackNumber: number, capacity: number) {
+        this.#platformNumber = platformNumber;
+        this.#trackNumber = trackNumber;
         this.#capacity = capacity;
     }
 
     /**
-     * Checks if the Platform has some space for a train or trains
+     * Checks if the Track has some space for a train or trains
      * @returns false if is full
      */
     isNotFull(): boolean {
@@ -24,8 +28,8 @@ export class Platform {
     }
 
     /**
-     * Removes a specified train from the Platform
-     * @param train train to be removed from the Platform
+     * Removes a specified train from the Track
+     * @param train train to be removed from the Track
      * @returns true if success
      */
     trainDepart(train: Train): boolean {
@@ -38,9 +42,9 @@ export class Platform {
     }
 
     /**
-     * Deals with train arrival on the Platform
+     * Deals with train arrival on the Track
      * @param train arrived train
-     * @returns false if the Platform is full
+     * @returns false if the Track is full
      */
     trainArrival(train: Train): boolean {
         let currentNumber = this.#currectOccupancy.length;
@@ -50,6 +54,12 @@ export class Platform {
         return false;
     }
 
+    get platformNumber() {
+        return this.#platformNumber;
+    }
+    get trackNumber() {
+        return this.#trackNumber;
+    }
     get currentOccupancy() {
         return this.#currectOccupancy.length;
     }
@@ -61,24 +71,67 @@ export class Platform {
     }
 }
 
+
+class TrainScheduleStep {
+    #trainID: string;
+    #arrivalTime: Date;
+    #departureTime: Date;
+    #nextStation: string;
+    #distanceToNext: number;
+
+    constructor(trainID: string, arrivalTime: Date, departureTime: Date, nextStation: string, distanceToNext: number) {
+        this.#trainID = trainID;
+        this.#arrivalTime = arrivalTime;
+        this.#departureTime = departureTime;
+        this.#nextStation = nextStation;
+        this.#distanceToNext = distanceToNext;
+    }
+
+    get trainID() {
+        return this.#trainID;
+    }
+    get arrivalTime() {
+        return this.#arrivalTime;
+    }
+    get departureTime() {
+        return this.#departureTime;
+    }
+    get nextStation() {
+        return this.#nextStation;
+    }
+    get distanceToNext() {
+        return this.#distanceToNext;
+    }
+
+}
+
+
 /**
  * For representation of each train Station
  */
 export class Station {
-    /** ???? */
-    #trainsSchedule: string = ""; // zależy, co dostarczy Kacper ????? TODO
+    #name: string;
+    #latitude: number;
+    #longitude: number;
+    /** contains info about each Train next goal, especially the distance to the next Station */
+    #trainsSchedule: TrainScheduleStep[] = [];
     /** Platform units of the Station */
-    #platforms: Platform[] = [];
+    #tracks: Track[] = [];
+
     #distances: Map<Train, number> = new Map();
 
-    /*
-    constructor(trainsSchedule, trains) {
-        for(let i = 0; i < cos; i++){
-            this.#platforms.push(new Platform(pojemnosc)); // tworzenie peronów
-            // operacje startowe na pociągach itd.
-        }
+
+    constructor(name: string, latitude: number, longitude: number) {
+        this.#name = name;
+        this.#latitude = latitude;
+        this.#longitude = longitude;
     }
-    */
+
+    addScheduleInfo(train: Train, arrivalTime: Date, departureTime: Date, nextStation: string, distanceToNext: number){
+        let schedule = new TrainScheduleStep(train.ID, arrivalTime, departureTime, nextStation, distanceToNext);
+        this.#trainsSchedule.push(schedule);
+        this.#distances.set(train, schedule.distanceToNext);
+    }
     // creating and starting trains methods
     // delay managing -> the most complex mechanism
 
