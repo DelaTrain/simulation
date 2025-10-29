@@ -37,20 +37,14 @@ const stations: Station[] = [
 
 const rails: Rail[] = [
     new Rail(stations[0], [new Position(50.063, 19.925), new Position(50.065, 19.915)], stations[1]),
-    new Rail(stations[0], [new Position(0, 19.945), new Position(0.057, 57.955)], stations[2]),
+    new Rail(stations[0], [new Position(50.065, 19.945), new Position(50.065, 19.955)], stations[2]),
 ];
 
 const tType = new TrainType(1, 60, 120, 2);
 
 const trains: Train[] = [
     new Train("123", tType, new TrainPosition(rails[0], TrainDirection.FromEndToStart, 350), stations[1], stations[2]),
-    new Train(
-        "456",
-        tType,
-        new TrainPosition(rails[1], TrainDirection.FromStartToEnd, 1000 * 1000 * 11),
-        stations[2],
-        stations[0]
-    ),
+    new Train("456", tType, new TrainPosition(rails[1], TrainDirection.FromStartToEnd, 1000), stations[2], stations[0]),
 ];
 
 rails.forEach((rail) => {
