@@ -48,7 +48,6 @@ export class Train {
         this.#goalStationFinal = goalFinal;
         this.#goalStationStep = goalStep;
         this.#position = currentPosition;
-        this.#position.
     }
 
     /**

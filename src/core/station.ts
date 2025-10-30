@@ -60,7 +60,7 @@ export class Station {
                 if(this.#trainsSchedule[i].arrivalTime != null){
                     if(this.#trainsSchedule[i].arrivalTime! >= currentTime){
                         trainS.updateGoal(this.#trainsSchedule[i].nextStation!);
-                        trainS.position.
+
                         trainS.moveTrain(this.#position, this.#trainsSchedule[i].nextRail!);
                     }
                 }
