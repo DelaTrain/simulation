@@ -49,7 +49,7 @@ export class ImportedData {
 
             for (let i = 0; i < t.stops.length; i++) {
                 const stop_current = t.stops[i];
-                const stop_next = i + 1 >= t.stops.length ? t.stops[i + 1] : null;
+                const stop_next = i + 1 <= t.stops.length ? t.stops[i + 1] : null;
 
                 const sc = this.#stations.get(stop_current.station_name);
                 if (!sc) {
