@@ -17,7 +17,6 @@ export class TrainPosition {
     /** as the name suggests - idk if mandatory in the basic version */
     #rail: Rail;
     #direction: TrainDirection;
-    #position: Position = new Position(-1, -1);
 
     constructor(rail: Rail, direction: TrainDirection = TrainDirection.FromStartToEnd, distance: number = 0) {
         this.#distance = distance;
@@ -56,18 +55,14 @@ export class TrainPosition {
         }
     }
 
-    updateCoords(position: Position) {
-        this.#position = position;
+    moveAlongRail(distanceDelta: number) {
+        this.#distance += distanceDelta;
     }
 
-    /** Position structure like the Station Position */
-    get coordsPosition() {
-        return this.#position;
-    }
     get distance() {
         return this.#distance;
     }
-    get railNumber() {
+    get rail() {
         return this.#rail;
     }
 }

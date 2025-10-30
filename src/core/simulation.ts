@@ -16,6 +16,7 @@ export class Simulation {
     trains: Train[] = [];
     trainsUnspawned: Train[];
     rails: Set<Rail>;
+    callback: any = null;
 
     constructor(data: ImportedData) {
         this.stations = data.stations;
@@ -27,9 +28,16 @@ export class Simulation {
     step() {
         this.currentTime += this.timeStep;
         updateTime();
+
+        this.trains.forEach((train) => {
+            train.moveTrain();
+        });
+
         this.stations.forEach((station) => {
             station.startTrains(new Date(this.currentTime));
         });
+
+        this.callback(this.trains);
     }
 
     runAutomatically() {
@@ -45,7 +53,7 @@ export class Simulation {
 
     #resetTime() {
         const date = new Date();
-        date.setHours(6, 0, 0, 0);
+        date.setHours(4, 20, 0, 0);
         this.currentTime = date.getTime();
     }
 }

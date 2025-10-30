@@ -4,6 +4,7 @@ import type { Rail } from "./rail";
 import { Position } from "../utils/position";
 import { TrainCategory } from "./trainCategory";
 import { TrainDirection, TrainPosition } from "./trainPosition";
+import { simulation } from "./simulation";
 
 /**
  * For representation of each Train in the simulation
@@ -87,17 +88,17 @@ export class Train {
      * Moves Train
      * @param newRail optional rail (number) change //TODO: Update comment
      */
-    moveTrain(position: Position, newRail?: Rail) {
-        //let goalDistance = this.#goalStationStep.distances.get(this);
-        this.setPosition();
-        let goalDistance = this.#position!.updateCoords(position);
-        if (this.#position!.coordsPosition.distanceTo(this.#goalStationStep.position) > this.position!.getTrainStep(this.#velocity, this.#acceleration)) {
-            this.position!.trainStep(this.#velocity, this.#acceleration);
-        } else {
-            this.#status = TrainStatus.Waiting;
-        }
-        if (newRail) {
-            this.#position!.updateRailNumber(newRail);
+    moveTrain() {
+        const distanceDefault = 44 * 15; // m/15s
+        this.#position!.moveAlongRail(distanceDefault);
+        const rail = this.#position!.rail;
+        if (this.#position!.distance >= rail.length()) {
+            const nextRail = rail.toStation!.findNextRailForTrain(this);
+            if (!nextRail) {
+                simulation.trains.splice(simulation.trains.indexOf(this), 1);
+                return;
+            }
+            this.setPosition(nextRail!);
         }
     }
 
@@ -109,8 +110,8 @@ export class Train {
         this.#status = status;
     }
 
-    setPosition() { // RAIL
-        this.#position = new TrainPosition(null!, TrainDirection.FromStartToEnd);
+    setPosition(rail: Rail) {
+        this.#position = new TrainPosition(rail, TrainDirection.FromStartToEnd, 0);
     }
 
     get number() {

@@ -58,28 +58,28 @@ export class Station {
     startTrains(currentTime: Date) {
         for(let i = 0; i < this.#trainsSchedule.length; i++){
             const trainS = this.#startingTrains.find((t) => t.number == this.#trainsSchedule[i].trainNumber)
-            if(trainS){
+            if(trainS) {
+                const dt = this.#trainsSchedule[i].departureTime
+                if(dt != null){
 
-                if(this.#trainsSchedule[i].departureTime != null){
-                    if(this.#trainsSchedule[i].departureTime! >= currentTime){
+                    if(dt.getHours() === currentTime.getHours() &&
+                       dt.getMinutes() === currentTime.getMinutes()) {
                         const spawned = simulation.trainsUnspawned.splice(simulation.trainsUnspawned.indexOf(trainS), 1);
+                        spawned[0].setPosition(this.#trainsSchedule[i].nextRail!);
                         simulation.trains.push(spawned[0]);
-                        trainS.updateGoal(this.#trainsSchedule[i].nextStation!);
-                        trainS.updateStatus(TrainStatus.NotWaiting);
-                        trainS.moveTrain(this.#position, this.#trainsSchedule[i].nextRail!);
-                        console.log("Train departure " + trainS.number + "\n");
                     }
                 }
             }
         }
     }
 
-
-    /*
-    delayTrain() {
-        // stwórz zmodyfikowany rozkład jazdy
+    findNextRailForTrain(train: Train): Rail | null {
+        const schedule = this.#trainsSchedule.find((s) => s.trainNumber === train.number);
+        if (schedule) {
+            return schedule.nextRail;
+        }
+        return null;
     }
-    */
 
     get distances() {
         return this.#distances;
