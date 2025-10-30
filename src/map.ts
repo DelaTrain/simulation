@@ -6,6 +6,8 @@ import { Rail } from "./core/rail";
 import { Train, TrainDirection, TrainPosition, TrainCategory } from "./core/train";
 import { simulation } from "./core/simulation";
 
+export const stationIcon = L.divIcon({ className: "station-icon" });
+
 export const map = L.map("map").setView([50.061389, 19.938333], 12);
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -13,7 +15,11 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 export const displayStation = (station: Station) => {
-    const marker = L.marker(station.position.toArray()).addTo(map);
+    const marker = L.marker(station.position.toArray(), {
+        icon: stationIcon,
+        title: station.name,
+        alt: station.name,
+    }).addTo(map);
     marker.bindPopup(`<b>${station.name}</b>`).openPopup();
 };
 
