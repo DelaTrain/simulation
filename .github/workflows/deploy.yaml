@@ -38,7 +38,7 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   REPO: DelaTrain/scraper
               run: |
-                  mkdir -p /data
+                  mkdir -p ./data
                   api="https://api.github.com/repos/${REPO}/releases/latest"
                   echo "Querying $api"
                   tarball_url=$(curl -sS -H "Authorization: token $GITHUB_TOKEN" "$api" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("tarball_url",""))')
@@ -48,7 +48,7 @@ jobs:
                   fi
                   echo "Downloading tarball from $tarball_url"
                   curl -sS -L -H "Authorization: token $GITHUB_TOKEN" -o /tmp/release.tar.gz "$tarball_url"
-                  tar -xzf /tmp/release.tar.gz -C /data --strip-components=1
+                  tar -xzf /tmp/release.tar.gz -C ./data --strip-components=1
             - uses: pnpm/action-setup@v4
               name: Install pnpm
               with:
