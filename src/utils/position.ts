@@ -1,5 +1,4 @@
 import { headingDistanceTo, moveTo } from "geolocation-utils";
-import L from "leaflet";
 
 export class Position {
     #latitude: number;

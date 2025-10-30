@@ -1,4 +1,5 @@
 import type { Position } from "../utils/position";
+import type { Rail } from "./rail";
 import { Train } from "./train";
 
 /**
@@ -6,13 +7,19 @@ import { Train } from "./train";
  */
 export class Track {
     #platformNumber: number;
-    #trackNumber: number;
+    /** track "number" within the platform may have some letters in it */
+    #trackNumber: string;
+
+    // TODO jakseluz: zamień poniższe na Train | null (tylko jeden pociąg moze zajmować tor)
+
     /** all Train units present on the platform track */
     #currectOccupancy: Train[] = [];
+
+
     /** maximum amount of Train units on the Track */
     #capacity: number = 1;
 
-    constructor(platformNumber: number, trackNumber: number, capacity: number) {
+    constructor(platformNumber: number, trackNumber: string, capacity: number) {
         this.#platformNumber = platformNumber;
         this.#trackNumber = trackNumber;
         this.#capacity = capacity;
@@ -73,22 +80,28 @@ export class Track {
 }
 
 class TrainScheduleStep {
-    #trainID: string;
-    #arrivalTime: Date;
-    #departureTime: Date;
-    #nextStation: string;
-    #distanceToNext: number;
+    #trainNumber: number;
+    #arrivalTime: Date | null;
+    #departureTime: Date | null;
+    #nextStation: Station | null;
+    #nextRail: Rail | null;
 
-    constructor(trainID: string, arrivalTime: Date, departureTime: Date, nextStation: string, distanceToNext: number) {
-        this.#trainID = trainID;
+    constructor(
+        trainID: number,
+        arrivalTime: Date | null,
+        departureTime: Date | null,
+        nextStation: Station | null,
+        nextRail: Rail | null,
+    ) {
+        this.#trainNumber = trainID;
         this.#arrivalTime = arrivalTime;
         this.#departureTime = departureTime;
         this.#nextStation = nextStation;
-        this.#distanceToNext = distanceToNext;
+        this.#nextRail = nextRail;
     }
 
-    get trainID() {
-        return this.#trainID;
+    get trainNumber() {
+        return this.#trainNumber;
     }
     get arrivalTime() {
         return this.#arrivalTime;
@@ -99,8 +112,8 @@ class TrainScheduleStep {
     get nextStation() {
         return this.#nextStation;
     }
-    get distanceToNext() {
-        return this.#distanceToNext;
+    get nextRail() {
+        return this.#nextRail;
     }
 }
 
@@ -123,10 +136,16 @@ export class Station {
         this.#position = position;
     }
 
-    addScheduleInfo(train: Train, arrivalTime: Date, departureTime: Date, nextStation: string, distanceToNext: number) {
-        let schedule = new TrainScheduleStep(train.ID, arrivalTime, departureTime, nextStation, distanceToNext);
+    addScheduleInfo(
+        train: Train,
+        arrivalTime: Date | null,
+        departureTime: Date | null,
+        nextStation: Station | null,
+        nextRail: Rail | null,
+    ) {
+        let schedule = new TrainScheduleStep(train.number, arrivalTime, departureTime, nextStation, nextRail);
         this.#trainsSchedule.push(schedule);
-        this.#distances.set(train, schedule.distanceToNext);
+        this.#distances.set(train, schedule.nextRail?.length() ?? 0);
     }
     // creating and starting trains methods
     // delay managing -> the most complex mechanism

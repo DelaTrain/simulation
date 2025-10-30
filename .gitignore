@@ -26,3 +26,6 @@ dist-ssr
 # Nix
 .envrc
 .direnv
+
+# Data
+data/
