@@ -13,12 +13,13 @@ export class Simulation {
     autorunSpeed: number = 250; // in milliseconds
 
     stations: Map<string, Station>;
-    trains: Train[];
+    trains: Train[] = [];
+    trainsUnspawned: Train[];
     rails: Set<Rail>;
 
     constructor(data: ImportedData) {
         this.stations = data.stations;
-        this.trains = data.trains;
+        this.trainsUnspawned = data.trains;
         this.rails = data.rails;
         this.#resetTime();
     }

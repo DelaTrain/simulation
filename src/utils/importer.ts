@@ -1,6 +1,7 @@
 import { Rail } from "../core/rail";
 import { Station } from "../core/station";
-import { Train, TrainCategory } from "../core/train";
+import { Train } from "../core/train";
+import { TrainCategory } from "../core/trainCategory";
 import { Position } from "./position";
 
 function mapCategory(category: string) {
@@ -54,6 +55,9 @@ export class ImportedData {
                 const sc = this.#stations.get(stop_current.station_name);
                 if (!sc) {
                     throw new Error(`Train ${t.name} ${t.number} has invalid stop station: ${stop_current.station_name}`);
+                }
+                if (i == 0) {
+                    sc.addStartingTrain(train);
                 }
                 const sn = this.#stations.get(stop_next?.station_name);
                 const rail = sn ? new Rail(sc, [], sn) : null;

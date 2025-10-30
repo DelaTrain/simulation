@@ -15,6 +15,8 @@ export class Station {
     #trainsSchedule: TrainScheduleStep[] = [];
     /** Platform units of the Station */
     #tracks: Track[] = [];
+    /** trains starting at this Station */
+    #startingTrains: Train[] = [];
 
     #distances: Map<Train, number> = new Map();
 
@@ -34,6 +36,14 @@ export class Station {
         this.#trainsSchedule.push(schedule);
         this.#distances.set(train, schedule.nextRail?.length() ?? 0);
     }
+
+    /** Adds a train starting at this Station */
+    addStartingTrain(train: Train) {
+        this.#startingTrains.push(train);
+    }
+
+
+
     // creating and starting trains methods
     // delay managing -> the most complex mechanism
 
@@ -42,14 +52,22 @@ export class Station {
     }
     */
 
-    /*
-    startTrains() { // wywoływane cyklicznie
-        // według rozkładu -> uruchom metody na odpowiednich Platform i Train
-        // - ustaw im dystanse do najbliższego postoju
-        // - zmień wpis stacji
-        // (modyfikujące prędkości - np. na zero, przyspieszenia i cele stacji oraz TrainStatus itd.)
+
+    startTrains(currentTime: Date) {
+        for(let i = 0; i < this.#trainsSchedule.length; i++){
+            var trainS = this.#startingTrains.find((t) => t.number == this.#trainsSchedule[i].trainNumber)
+            if(trainS){
+                if(this.#trainsSchedule[i].arrivalTime != null){
+                    if(this.#trainsSchedule[i].arrivalTime! >= currentTime){
+                        trainS.updateGoal(this.#trainsSchedule[i].nextStation!);
+                        trainS.position.
+                        trainS.moveTrain(this.#position, this.#trainsSchedule[i].nextRail!);
+                    }
+                }
+            }
+        }
     }
-    */
+
 
     /*
     delayTrain() {
