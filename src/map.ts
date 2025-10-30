@@ -19,7 +19,7 @@ export const displayStation = (station: Station) => {
         title: station.name,
         alt: station.name,
     }).addTo(map);
-    marker.bindPopup(`<b>${station.name}</b>`).openPopup();
+    marker.bindPopup(`<b>${station.name}</b>`);
 };
 
 export const displayRail = (rail: Rail) => {
@@ -31,9 +31,11 @@ export const displayRail = (rail: Rail) => {
 let trainMarkers: L.Marker[] = [];
 
 export const displayTrain = (train: Train) => {
-    const marker = L.marker(train.position!.calculatePosition().toArray()).addTo(map);
+    const marker = L.marker(train.position!.calculatePosition().toArray(), {
+        zIndexOffset: 1000,
+    }).addTo(map);
     marker.setIcon(L.icon({ iconUrl: "https://cdn-icons-png.flaticon.com/512/565/565410.png", iconSize: [32, 32] }));
-    marker.bindPopup(`<b>${train.displayName()}</b>`).openPopup();
+    marker.bindPopup(`<b>${train.displayName()}</b>`);
     trainMarkers.push(marker);
     return marker;
 };
