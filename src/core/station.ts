@@ -7,13 +7,19 @@ import { Train } from "./train";
  */
 export class Track {
     #platformNumber: number;
-    #trackNumber: number;
+    /** track "number" within the platform may have some letters in it */
+    #trackNumber: string;
+
+    // TODO jakseluz: zamień poniższe na Train | null (tylko jeden pociąg moze zajmować tor)
+
     /** all Train units present on the platform track */
     #currectOccupancy: Train[] = [];
+
+
     /** maximum amount of Train units on the Track */
     #capacity: number = 1;
 
-    constructor(platformNumber: number, trackNumber: number, capacity: number) {
+    constructor(platformNumber: number, trackNumber: string, capacity: number) {
         this.#platformNumber = platformNumber;
         this.#trackNumber = trackNumber;
         this.#capacity = capacity;
@@ -74,28 +80,28 @@ export class Track {
 }
 
 class TrainScheduleStep {
-    #trainID: string;
+    #trainNumber: number;
     #arrivalTime: Date | null;
     #departureTime: Date | null;
     #nextStation: Station | null;
     #nextRail: Rail | null;
 
     constructor(
-        trainID: string,
+        trainID: number,
         arrivalTime: Date | null,
         departureTime: Date | null,
         nextStation: Station | null,
         nextRail: Rail | null,
     ) {
-        this.#trainID = trainID;
+        this.#trainNumber = trainID;
         this.#arrivalTime = arrivalTime;
         this.#departureTime = departureTime;
         this.#nextStation = nextStation;
         this.#nextRail = nextRail;
     }
 
-    get trainID() {
-        return this.#trainID;
+    get trainNumber() {
+        return this.#trainNumber;
     }
     get arrivalTime() {
         return this.#arrivalTime;
@@ -137,7 +143,7 @@ export class Station {
         nextStation: Station | null,
         nextRail: Rail | null,
     ) {
-        let schedule = new TrainScheduleStep(train.ID, arrivalTime, departureTime, nextStation, nextRail);
+        let schedule = new TrainScheduleStep(train.number, arrivalTime, departureTime, nextStation, nextRail);
         this.#trainsSchedule.push(schedule);
         this.#distances.set(train, schedule.nextRail?.length() ?? 0);
     }

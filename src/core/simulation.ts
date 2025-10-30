@@ -1,15 +1,23 @@
+import { ImportedData } from "../utils/importer";
 import type { Station } from "./station";
 import "./train";
 import type { Train } from "./train";
+import DATA from "../../data/delatrain.json";
+import type { Rail } from "./rail";
 
 export class Simulation {
     timeStep: number = 15000; // in milliseconds
     currentTime: number = Date.now(); // in milliseconds
 
-    stations: Map<string, Station> = new Map();
-    trains: Map<string, Train> = new Map();
+    stations: Map<string, Station>;
+    trains: Train[];
+    rails: Set<Rail>;
 
-    constructor() {}
+    constructor(data: ImportedData) {
+        this.stations = data.stations;
+        this.trains = data.trains;
+        this.rails = data.rails;
+    }
 
     step() {
         this.currentTime += this.timeStep;
@@ -33,4 +41,5 @@ export class Simulation {
             * delay range on the map (?)
 */
 
-export const simulation = new Simulation();
+const importedData = new ImportedData(DATA);
+export const simulation = new Simulation(importedData);

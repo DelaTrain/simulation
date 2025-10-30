@@ -7,7 +7,8 @@ import type { Position } from "../utils/position";
 /**
  * For representation of each Train Type depending on the train model/ company
  */
-export class TrainType {
+export class TrainCategory {
+    #name: string;
     /** priority scale value amongst trains */
     #priority: number = 0;
     /** the time exceeding which will result in some delay */
@@ -17,7 +18,8 @@ export class TrainType {
     /** idk; probably some parameter describing capability of gaining the above speed */
     #acceleration: number = 0;
 
-    constructor(priority: number, maxWaitingTime: number, maxVelocity: number, acceleration: number) {
+    constructor(name: string, priority: number, maxWaitingTime: number, maxVelocity: number, acceleration: number) {
+        this.#name = name;
         this.#priority = priority;
         this.#maxWaitingTime = maxWaitingTime;
         this.#maxVelocity = maxVelocity;
@@ -32,6 +34,9 @@ export class TrainType {
         this.#priority = newPriority;
     }
 
+    get name() {
+        return this.#name;
+    }
     get priority() {
         return this.#priority;
     }
@@ -107,10 +112,12 @@ export class TrainPosition {
  * For representation of each Train in the simulation
  */
 export class Train {
-    /**  */
-    #ID: string;
-    /** train model or company */
-    #type: TrainType;
+    /** should be unique in Poland */
+    #number: number;
+    /** train company (or their subcategory) */
+    #type: TrainCategory;
+    /** human-friendly name of the train */
+    #customName: string | null = null;
     /** train speed value */
     #velocity: number = 0; // TODO - unit
     /** train acceleration value */
@@ -131,14 +138,16 @@ export class Train {
     #delay: number = 0;
 
     constructor(
-        ID: string,
-        trainType: TrainType,
+        number: number,
+        trainType: TrainCategory,
+        customName: string | null,
         currentPosition: TrainPosition,
         goalFinal: Station,
         goalStep: Station
     ) {
-        this.#ID = ID;
+        this.#number = number;
         this.#type = trainType;
+        this.#customName = customName;
         this.#goalStationFinal = goalFinal;
         this.#goalStationStep = goalStep;
         this.#position = currentPosition;
@@ -198,8 +207,12 @@ export class Train {
         }
     }
 
-    get ID() {
-        return this.#ID;
+    displayName(): string {
+        return `${this.#type.name} ${this.#number}${this.#customName ? ` "${this.#customName}"` : ""}`;
+    }
+
+    get number() {
+        return this.#number;
     }
     get type() {
         return this.#type;

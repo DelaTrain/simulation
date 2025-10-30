@@ -1,16 +1,18 @@
 import { Rail } from "../core/rail";
 import { Station, Track } from "../core/station";
-import { Train, TrainType } from "../core/train";
+import { Train, TrainCategory } from "../core/train";
 import { Position } from "./position";
 
-function mapCategoryToTrainType(category: string) {
+function mapCategory(category: string) {
     switch (category) {
-        case "BUS":
-            return new TrainType(0, 40, 80, 1);
+        case "Bus":
+            return new TrainCategory("Bus", 0, 40, 80, 1);
         case "R":
-            return new TrainType(1, 60, 120, 2);
+            return new TrainCategory("R", 1, 60, 120, 2);
+        case "KS":
+            return new TrainCategory("KS", 1, 60, 120, 2);
         default:
-            return new TrainType(2, 80, 160, 3);
+            return new TrainCategory(category, 2, 80, 160, 3);
     }
 }
 
@@ -38,7 +40,9 @@ export class ImportedData {
 
     #importTrains(trains: any[]) {
         this.#trains = trains.map((t) => {
-            const train = new Train(`${t.name} ${t.number}`, mapCategoryToTrainType(t.category), null!, null!, null!); // TODO: What position and targets have not spawned trains?
+            // TODO: What position and targets have trains that haven't spawned yet?
+            const train = new Train(t.number, mapCategory(t.category), t.name, null!, null!, null!);
+
             if (t.stops.length < 2) {
                 throw new Error(`Train ${t.name} ${t.number} has less than 2 stops`);
             }
