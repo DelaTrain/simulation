@@ -4,19 +4,29 @@ import { convertTime } from "./utils/print";
 const timeEle = document.getElementById("time")!;
 const stepButton = document.getElementById("step-button")!;
 const restartButton = document.getElementById("restart-button")!;
+const autorunButton = document.getElementById("autorun-button")!;
 
-function updateTime() {
+export function updateTime() {
     timeEle.textContent = `Czas symulacji: ${convertTime(simulation.currentTime)}`;
 }
 
 stepButton.addEventListener("click", () => {
     simulation.step();
-    updateTime();
 });
 
 restartButton.addEventListener("click", () => {
     simulation.restart();
-    updateTime();
+});
+
+autorunButton.addEventListener("click", () => {
+    if (simulation.autorun) {
+        simulation.autorun = false;
+        autorunButton.textContent = "Play";
+    } else {
+        simulation.autorun = true;
+        autorunButton.textContent = "Pause";
+        simulation.runAutomatically();
+    }
 });
 
 updateTime();
