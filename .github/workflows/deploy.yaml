@@ -41,14 +41,14 @@ jobs:
                   mkdir -p ./data
                   api="https://api.github.com/repos/${REPO}/releases/latest"
                   echo "Querying $api"
-                  tarball_url=$(curl -sS -H "Authorization: token $GITHUB_TOKEN" "$api" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("tarball_url",""))')
-                  if [ -z "$tarball_url" ]; then
-                      echo "Failed to find tarball_url for latest release" >&2
+                  browser_url=$(curl -sS -H "Authorization: token $GITHUB_TOKEN" "$api" | python3 -c 'import sys,json; j=json.load(sys.stdin); assets=j.get("assets",[]); print(next((a.get("browser_download_url") for a in assets if a.get("name")== "delatrain.json"), ""))')
+                  if [ -z "$browser_url" ]; then
+                      echo "delatrain.json asset not found in latest release" >&2
                       exit 1
                   fi
-                  echo "Downloading tarball from $tarball_url"
-                  curl -sS -L -H "Authorization: token $GITHUB_TOKEN" -o /tmp/release.tar.gz "$tarball_url"
-                  tar -xzf /tmp/release.tar.gz -C ./data --strip-components=1
+                  echo "Downloading delatrain.json from $browser_url"
+                  curl -sS -L -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/octet-stream" -o ./data/delatrain.json "$browser_url"
+                  echo "Saved ./data/delatrain.json"
             - uses: pnpm/action-setup@v4
               name: Install pnpm
               with:
