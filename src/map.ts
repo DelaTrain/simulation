@@ -29,7 +29,7 @@ export const displayRail = (rail: Rail) => {
 };
 
 export const displayTrain = (train: Train) => {
-    const marker = L.marker(train.position.calculatePosition().toArray()).addTo(map);
+    const marker = L.marker(train.position!.calculatePosition().toArray()).addTo(map);
     marker.setIcon(L.icon({ iconUrl: "https://cdn-icons-png.flaticon.com/512/565/565410.png", iconSize: [32, 32] }));
     marker.bindPopup(`<b>${train.displayName()}</b>`).openPopup();
     return marker;

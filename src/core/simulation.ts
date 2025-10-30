@@ -27,6 +27,9 @@ export class Simulation {
     step() {
         this.currentTime += this.timeStep;
         updateTime();
+        this.stations.forEach((station) => {
+            station.startTrains(new Date(this.currentTime));
+        });
     }
 
     runAutomatically() {

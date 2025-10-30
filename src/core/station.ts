@@ -3,6 +3,8 @@ import type { Rail } from "./rail";
 import { Train } from "./train";
 import { TrainScheduleStep } from "./trainScheduleStep.ts"
 import { Track } from "./track.ts"
+import { TrainStatus } from "./trainStatus.ts";
+import { simulation } from "./simulation.ts";
 
 /**
  * For representation of each train Station
@@ -55,13 +57,17 @@ export class Station {
 
     startTrains(currentTime: Date) {
         for(let i = 0; i < this.#trainsSchedule.length; i++){
-            var trainS = this.#startingTrains.find((t) => t.number == this.#trainsSchedule[i].trainNumber)
+            const trainS = this.#startingTrains.find((t) => t.number == this.#trainsSchedule[i].trainNumber)
             if(trainS){
-                if(this.#trainsSchedule[i].arrivalTime != null){
-                    if(this.#trainsSchedule[i].arrivalTime! >= currentTime){
-                        trainS.updateGoal(this.#trainsSchedule[i].nextStation!);
 
+                if(this.#trainsSchedule[i].departureTime != null){
+                    if(this.#trainsSchedule[i].departureTime! >= currentTime){
+                        const spawned = simulation.trainsUnspawned.splice(simulation.trainsUnspawned.indexOf(trainS), 1);
+                        simulation.trains.push(spawned[0]);
+                        trainS.updateGoal(this.#trainsSchedule[i].nextStation!);
+                        trainS.updateStatus(TrainStatus.NotWaiting);
                         trainS.moveTrain(this.#position, this.#trainsSchedule[i].nextRail!);
+                        console.log("Train departure " + trainS.number + "\n");
                     }
                 }
             }

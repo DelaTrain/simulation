@@ -30,10 +30,13 @@ export class TrainPosition {
      * @param velocity train current velocity
      * @param acceleration train current acceleration
      */
-    trainStep(velocity: number, acceleration: number): number {
+    trainStep(velocity: number, acceleration: number) {
         this.#distance +=
-            velocity * simulation.timeStep + (1 / 2) * (acceleration * simulation.timeStep * simulation.timeStep);
-        return this.#distance;
+            this.getTrainStep(velocity, acceleration);
+    }
+
+    getTrainStep(velocity: number, acceleration: number): number {
+        return velocity * simulation.timeStep + (1 / 2) * (acceleration * simulation.timeStep * simulation.timeStep);
     }
 
     /**

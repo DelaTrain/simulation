@@ -65,10 +65,21 @@ export class ImportedData {
                     this.#rails.add(rail);
                 }
 
+                let arrival_time = new Date();
+                if (stop_current.arrival_time != null) {
+                    const [hours, minutes, seconds] = stop_current.arrival_time.split(":").map((x: string) => parseInt(x, 10));
+                    arrival_time.setHours(hours, minutes, seconds, 0);
+                }
+                let departure_time = new Date();
+                if (stop_current.departure_time != null) {
+                    const [hours, minutes, seconds] = stop_current.departure_time.split(":").map((x: string) => parseInt(x, 10));
+                    departure_time.setHours(hours, minutes, seconds, 0);
+                }
+
                 sc.addScheduleInfo(
                     train,
-                    stop_current.arrival_time == null ? null : new Date(stop_current.arrival_time),
-                    stop_current.departure_time == null ? null : new Date(stop_current.departure_time),
+                    stop_current.arrival_time == null ? null : arrival_time,
+                    stop_current.departure_time == null ? null : departure_time,
                     sn ?? null,
                     rail,
                 );

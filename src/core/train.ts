@@ -3,7 +3,7 @@ import { TrainStatus } from "./trainStatus";
 import type { Rail } from "./rail";
 import { Position } from "../utils/position";
 import { TrainCategory } from "./trainCategory";
-import { TrainPosition } from "./trainPosition";
+import { TrainDirection, TrainPosition } from "./trainPosition";
 
 /**
  * For representation of each Train in the simulation
@@ -28,7 +28,7 @@ export class Train {
      * */
     #goalStationStep: Station;
     /** contains distance and rail number */
-    #position: TrainPosition;
+    #position: TrainPosition | null;
     /** says if the train is waiting or not */
     #status: TrainStatus = TrainStatus.Waiting;
     /** individual time of being late */
@@ -38,7 +38,7 @@ export class Train {
         number: number,
         trainType: TrainCategory,
         customName: string | null,
-        currentPosition: TrainPosition,
+        currentPosition: TrainPosition | null,
         goalFinal: Station,
         goalStep: Station
     ) {
@@ -89,19 +89,28 @@ export class Train {
      */
     moveTrain(position: Position, newRail?: Rail) {
         //let goalDistance = this.#goalStationStep.distances.get(this);
-        let goalDistance = this.#position.updateCoords(position);
-        if (this.#position.coordsPosition.distanceTo(this.#goalStationStep.position) > this.position.trainStep(this.#velocity, this.#acceleration)) {
-
+        this.setPosition();
+        let goalDistance = this.#position!.updateCoords(position);
+        if (this.#position!.coordsPosition.distanceTo(this.#goalStationStep.position) > this.position!.getTrainStep(this.#velocity, this.#acceleration)) {
+            this.position!.trainStep(this.#velocity, this.#acceleration);
         } else {
             this.#status = TrainStatus.Waiting;
         }
         if (newRail) {
-            this.#position.updateRailNumber(newRail);
+            this.#position!.updateRailNumber(newRail);
         }
     }
 
     displayName(): string {
         return `${this.#type.name} ${this.#number}${this.#customName ? ` "${this.#customName}"` : ""}`;
+    }
+
+    updateStatus(status: TrainStatus){
+        this.#status = status;
+    }
+
+    setPosition() { // RAIL
+        this.#position = new TrainPosition(null!, TrainDirection.FromStartToEnd);
     }
 
     get number() {
